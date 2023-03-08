@@ -38,6 +38,11 @@
 
 //UUID => Unique Universal ID
 
+// FORMAS DO FRONT-END ENVIAR SOLICITAÇÕES
+// -> Query Parameters : parametros nomeados no prórpio endereço da aplicação, ex: http://localhost:3000/users?userId=1&...., URL Statefull => Filtros, paginação, não-obrigatórios
+// -> Route Parameters : parametros NÃO nomeados no prórpio endereço da aplicação, ex: http://localhost:3000/users/1...., Identificação de recurso
+// -> Request Body : Envio de informações de um formulário (HTTPs)
+
 import http from 'node:http' //modulo intrno não é necessário instalação, por padrão colocasse node:
 import  { json }  from './middlewares/json.js'
 import { routes } from './routes.js'

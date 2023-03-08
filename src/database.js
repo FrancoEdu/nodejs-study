@@ -23,6 +23,10 @@ export class Database{
         return data
     }
 
+    delete(tabela, data){
+        
+    }
+
     insert(table, data){
         if(Array.isArray(this.#database[table])){ //se já existe um array inserido nessa tabela
             this.#database[table].push(data) //insere na tabela o dado 
