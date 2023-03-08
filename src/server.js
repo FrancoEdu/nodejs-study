@@ -1,6 +1,3 @@
-import http from 'node:http' //modulo intrno não é necessário instalação, por padrão colocasse node:
-import  { json }  from './middlewares/json.js'
-
 // Rotas são formas de entradas para executar várias tarefas, como por exemplo:
 // -> Craiação de Usuários
 // -> Listagem de usuários
@@ -39,7 +36,11 @@ import  { json }  from './middlewares/json.js'
 // 400 - 499 => Client Error
 // 500 - 599 => Server Error
 
-const users = []
+//UUID => Unique Universal ID
+
+import http from 'node:http' //modulo intrno não é necessário instalação, por padrão colocasse node:
+import  { json }  from './middlewares/json.js'
+import { routes } from './routes.js'
 
 const server = http.createServer(async(request, response)=>{ //criando servidor
 
@@ -47,17 +48,12 @@ const server = http.createServer(async(request, response)=>{ //criando servidor
     
     await json(request,response) // aqui a requisição foi interceptada pelo middleware
 
-    if(method === "GET" && url === "/users"){
-        return response.end(JSON.stringify(users)) //justifica a estrutura de dados para [{obj}]
-    }
-    if(method === "POST" && url === "/users"){ // se o metodo da requisicao for POST e a url for /users, criará o user
-        const { name, email } = request.body        
-        users.push({
-            id: Math.random(),
-            name,
-            email,
-        })
-        return response.writeHead(201).end('Criação de usuário')
+    const route = routes.find(route => {
+        return route.method === method && route.path === url
+    })
+
+    if(route){
+        return route.handler(request,response)
     }
 
     return response.writeHead(404).end("Not Found...")
