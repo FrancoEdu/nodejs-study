@@ -1,4 +1,5 @@
 import http from 'node:http' //modulo intrno não é necessário instalação, por padrão colocasse node:
+import  { json }  from './middlewares/json.js'
 
 // Rotas são formas de entradas para executar várias tarefas, como por exemplo:
 // -> Craiação de Usuários
@@ -42,27 +43,17 @@ const users = []
 
 const server = http.createServer(async(request, response)=>{ //criando servidor
 
-    const { method, url } = request //mesma coisa que const method = req.method (desestruturação)
+    const { method, url } = request //mesma coisa que const method = req.method (desestruturação), aqui a requisição foi recebida
     
-    const buf = []
-
-    for await (const chunck of request){
-        buf.push(chunck)
-    } //o await aguarada que cada pedaço da stream seja retornado
-
-    try{
-        request.body = JSON.parse(Buffer.concat(buf).toString())
-    }catch{
-        request.body = null
-    }
+    await json(request,response) // aqui a requisição foi interceptada pelo middleware
 
     if(method === "GET" && url === "/users"){
-        return response.setHeader('Content-type', 'application/json').end(JSON.stringify(users)) //justifica a estrutura de dados para [{obj}]
+        return response.end(JSON.stringify(users)) //justifica a estrutura de dados para [{obj}]
     }
     if(method === "POST" && url === "/users"){ // se o metodo da requisicao for POST e a url for /users, criará o user
         const { name, email } = request.body        
         users.push({
-            id: 1,
+            id: Math.random(),
             name,
             email,
         })
