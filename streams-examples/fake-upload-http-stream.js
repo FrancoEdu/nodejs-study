@@ -7,7 +7,7 @@ class OneToHundredStream extends Readable{
         const i = this.index++
 
         setTimeout(() => {
-            if(i > 100){
+            if(i > 5){
                 this.push(null)
             }else{
                 const buf = Buffer.from(String(i)) //necessario conversão para buffer pq dentro de streams n pode se trabalhar com tipos primitivos, e depois convertido para String pois o buf não lê Int
@@ -16,3 +16,14 @@ class OneToHundredStream extends Readable{
         },1000) //aguarda 1s para ser printado no terminal
     }
 }
+
+// fetch API -> Utilizada para realizar requisições
+
+fetch('http://localhost:3334', {
+    method: 'POST',
+    body: new OneToHundredStream(),
+}).then(response => {
+    return response.text()
+}).then(data => {
+    console.log(data)
+})

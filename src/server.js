@@ -40,19 +40,31 @@ import http from 'node:http' //modulo intrno não é necessário instalação, p
 
 const users = []
 
-const server = http.createServer((request, response)=>{ //criando servidor
+const server = http.createServer(async(request, response)=>{ //criando servidor
 
     const { method, url } = request //mesma coisa que const method = req.method (desestruturação)
     
-    if(method === "GET" && url === "/users"){
+    const buf = []
 
+    for await (const chunck of request){
+        buf.push(chunck)
+    } //o await aguarada que cada pedaço da stream seja retornado
+
+    try{
+        request.body = JSON.parse(Buffer.concat(buf).toString())
+    }catch{
+        request.body = null
+    }
+
+    if(method === "GET" && url === "/users"){
         return response.setHeader('Content-type', 'application/json').end(JSON.stringify(users)) //justifica a estrutura de dados para [{obj}]
     }
     if(method === "POST" && url === "/users"){ // se o metodo da requisicao for POST e a url for /users, criará o user
+        const { name, email } = request.body        
         users.push({
             id: 1,
-            name: 'Eduardo Franco',
-            email: 'eduardo.franco@cnpem.br',
+            name,
+            email,
         })
         return response.writeHead(201).end('Criação de usuário')
     }
