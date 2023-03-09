@@ -54,10 +54,14 @@ const server = http.createServer(async(request, response)=>{ //criando servidor
     await json(request,response) // aqui a requisição foi interceptada pelo middleware
 
     const route = routes.find(route => {
-        return route.method === method && route.path === url
+        return route.method === method && route.path.test(url)
     })
 
     if(route){
+        const routeParams = request.url.match(route.path)
+
+        request.params = {...routeParams.groups}
+
         return route.handler(request,response)
     }
 

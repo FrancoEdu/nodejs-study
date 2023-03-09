@@ -24,7 +24,12 @@ export class Database{
     }
 
     delete(tabela, data){
-        
+        const rowIndex = this.#database[tabela].findIndex(row => row.id === data) //busca o id passado em data em determinada tabela
+
+        if(rowIndex > -1){
+            this.#database[tabela].splice(rowIndex, 1)
+            this.#persist()
+        }
     }
 
     insert(table, data){
