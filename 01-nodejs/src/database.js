@@ -18,9 +18,19 @@ export class Database{
         fs.writeFile(dataBasePathName, JSON.stringify(this.#database)) //escreve no arquivo db.json o dado recebido da inserção
     }
 
-    select(table){
-        const data = this.#database[table] ?? [] //procura se a tablea existe, caso não exista, retorna um array vazia
+    select(table, search){
+        let data = this.#database[table] ?? [] //procura se a tablea existe, caso não exista, retorna um array vazia
+
+        if(search){
+            data = data.filter(row => {
+                return Object.entries(search).some(([key, value]) => {
+                    return row[key].toLowerCase().includes(value.toLowerCase())
+                })
+            })
+        }
+        
         return data
+        
     }
 
     delete(tabela, data){
@@ -28,6 +38,16 @@ export class Database{
 
         if(rowIndex > -1){
             this.#database[tabela].splice(rowIndex, 1)
+            this.#persist()
+        }
+    }
+
+    change(tabela, id, data){
+        
+        const rowIndex = this.#database[tabela].findIndex(row => row.id === id)
+
+        if(rowIndex > -1){
+            this.#database[tabela][rowIndex] = {id, ...data}
             this.#persist()
         }
     }

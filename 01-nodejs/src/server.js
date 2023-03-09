@@ -46,6 +46,7 @@
 import http from 'node:http' //modulo intrno não é necessário instalação, por padrão colocasse node:
 import  { json }  from './middlewares/json.js'
 import { routes } from './routes.js'
+import { extractQueryParams } from './utils/extract-query-params.js'
 
 const server = http.createServer(async(request, response)=>{ //criando servidor
 
@@ -60,7 +61,9 @@ const server = http.createServer(async(request, response)=>{ //criando servidor
     if(route){
         const routeParams = request.url.match(route.path)
 
-        request.params = {...routeParams.groups}
+        const { query, ...params} = routeParams.groups
+        request.params = params
+        request.query = query ? extractQueryParams(query) : {}
 
         return route.handler(request,response)
     }
