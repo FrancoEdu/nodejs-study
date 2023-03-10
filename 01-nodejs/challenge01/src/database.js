@@ -32,15 +32,33 @@ export class Database{
     }
 
     insert(tabela, data){
+        if(Array.isArray(this.#database[tabela])){//se já existe um array inserido nessa tabela
+            this.#database[tabela].push(data) // insere ao final do array o novo dado
+        }else{
+            this.#database[tabela] = [data] // começa a tabela com o novo dado
+        }
 
+        this.#persist()
+
+        return data
     }
 
     delete(tabela, id){
+        const rowIndex = this.#database[tabela].findIndex(row => row.id === id) //procura o id dentro da tabela
 
+        if(rowIndex > -1){
+            this.#database[tabela].splice(rowIndex,1)
+            this.#persist() 
+        }
     }
 
     update(tabela, id, data){
+        const rowIndex = this.#database[tabela].findIndex(row => row.id === id)
 
+        if(rowIndex > -1){
+            this.#database[tabela][rowIndex] = {id, ...data}
+            this.#persist()
+        }
     }
 
 }
