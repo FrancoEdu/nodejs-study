@@ -38,3 +38,5 @@
 - Deve ser possível identificarmos o usuário entre as requisições
 - O usuário só pode realizar transações que ele criou
 
+
+---------------------------------------------------------------------------------------------------
